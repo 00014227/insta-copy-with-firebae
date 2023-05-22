@@ -74,10 +74,9 @@ const Home = ({ userProfile, publications, setPublications }) => {
   }
 
   return (
-    <div className=" ">
+    <div className="flex">
       <NavBar
-        adminData={adminData}
-        setAdminData={setAdminData}
+        
         imageUrl={userProfile.imageUrl}
       />
       <div className="max-w-lg w-full mx-auto">

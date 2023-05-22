@@ -7,10 +7,10 @@ import { auth, db, storage } from '../firebase';
 import PublicationForm from './PublicationForm';
 import firebase from 'firebase/compat/app'
 
-const ModalHeading = (props) => {
+const ModalHeading = () => {
   const [showModal, setShowModal] = useState(false)
   const [showModal2, setShowModal2] = useState(false)
-  const [bodyVisibility, setBodyVisibility] = useState(false)
+  const [bodyVisibility, setBodyVisibility] = useState(false) 
  
 
   const [imageUrl, setImageUrl] = useState(null);
@@ -69,11 +69,14 @@ const ModalHeading = (props) => {
         like: 0,
         dateCreated: new Date()
       });
-  
+      
+      // setPublications((prevPublications) => [...prevPublications, newPostRef]);
+
       // Retrieve the newly created post document to obtain its ID
       const newPostDoc = await getDoc(newPostRef);
       const newPostID = newPostDoc.id;
-  
+      
+      
       console.log('New post created with ID:', newPostID);
     } catch (error) {
       console.log(error);
