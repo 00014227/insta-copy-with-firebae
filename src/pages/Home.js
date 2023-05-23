@@ -1,11 +1,14 @@
 import { arrayRemove, arrayUnion, collection, doc, getDocs, getFirestore, updateDoc } from 'firebase/firestore';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import NavBar from '../components/NavBar';
+import { AppContext } from '../contexts/AppContext';
+
 import { auth, db } from '../firebase';
 
-const Home = ({ userProfile, publications, setPublications }) => {
+const Home = () => {
+  const { userProfile, publications, updateState} = useContext(AppContext); 
   
-  const [adminData, setAdminData] = useState([]);
+  const memoizedPublications = useMemo(() => publications || [], [publications]); 
   
   const [likeMap, setLikeMap] = useState(false);
   const [imageUrl, setImageUrl] = useState(null);
@@ -35,12 +38,12 @@ const Home = ({ userProfile, publications, setPublications }) => {
         return pub;
       });
   
-      setPublications(updatedPublications);
+      updateState(updatedPublications);
       
     } else {
       await updateDoc(publicationRef, {
         likes: currentLikes + 1,
-        likedBy: arrayUnion(auth.currentUser.uid),
+        likedBy: arrayUnion(auth.currentUser.uid), 
       });
   
       const updatedPublications = publications.map((pub) => {
@@ -54,7 +57,7 @@ const Home = ({ userProfile, publications, setPublications }) => {
         return pub;
       });
     
-      setPublications(updatedPublications);
+      updateState(updatedPublications);
       
     }
   };
@@ -83,7 +86,7 @@ const Home = ({ userProfile, publications, setPublications }) => {
        
 
         <div>
-          {publications.map((publication) => (
+          {memoizedPublications.map((publication) => (
             <article 
             key={publication.id}
             className="border-b border-solid mt-3">
@@ -153,8 +156,8 @@ const Home = ({ userProfile, publications, setPublications }) => {
                       d="M20.656 17.008a9.993 9.993 0 1 0-3.59 3.615L22 22Z"
                       fill="none"
                       stroke="currentColor"
-                      stroke-linejoin="round"
-                      stroke-width="2"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
                     ></path>
                   </svg>
                 </button>
@@ -174,8 +177,8 @@ const Home = ({ userProfile, publications, setPublications }) => {
                     <line
                       fill="none"
                       stroke="currentColor"
-                      stroke-linejoin="round"
-                      stroke-width="2"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
                       x1="22"
                       x2="9.218"
                       y1="3"
@@ -185,8 +188,8 @@ const Home = ({ userProfile, publications, setPublications }) => {
                       fill="none"
                       points="11.698 20.334 22 3.001 2 3.001 9.218 10.084 11.698 20.334"
                       stroke="currentColor"
-                      stroke-linejoin="round"
-                      stroke-width="2"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
                     ></polygon>
                   </svg>
                 </button>

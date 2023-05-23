@@ -13,23 +13,21 @@ export async function doesUsernameExist(username) {
 
 
 
-export const getPosts = async (setPublications) => {
+export const getPosts = async () => {
   try {
     const querySnapshot = await getDocs(collection(db, 'posts'));
     const posts = [];
-    
+
     querySnapshot.forEach((doc) => {
       const post = doc.data();
       post.id = doc.id; // Include the document ID as part of the post object
       posts.push(post);
     });
-    
-   
-    setPublications(posts)
-    
-    // Process the posts data as needed
-    
+
+    return posts;
   } catch (error) {
     console.log(error);
+    return []; // Return an empty array in case of an error
   }
 };
+

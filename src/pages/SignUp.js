@@ -1,9 +1,9 @@
 import { createUserWithEmailAndPassword, getAuth } from 'firebase/auth';
-import React, { useContext, useState } from 'react';
+import React, {  useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {  doc, getFirestore, setDoc } from "firebase/firestore"; 
 import { ref, uploadBytes, getDownloadURL, getStorage } from 'firebase/storage';
-import { UserProvider } from '../contexts/UserContext';
+
 
 
 
@@ -19,7 +19,7 @@ const SignUp = () => {
   const [percent, setPercent] = useState(0);
 
   const navigate = useNavigate()
-  const userContext = useContext(UserProvider)
+
 
   const handleSignup = async (email, password, additionalData, imageFile) => {
     
