@@ -7,7 +7,7 @@ import { AppContext } from '../contexts/AppContext';
 
 const Profile = () => {
 
-    const {userProfile, currentUserPublications} = useContext(AppContext)
+    const { userProfile, currentUserPublications } = useContext(AppContext)
 
     if (!userProfile || !currentUserPublications) {
         return (
@@ -68,19 +68,12 @@ const Profile = () => {
                     <p>СОХРАНЕННОЕ</p>
                     <p>ОТМЕТКИ</p>
                 </div>
-                <PublicationModal/>
+                
                 <div className='flex grid gap-1 grid-cols-3 '>
-                    {currentUserPublications.map((currentUserPublication) => (
-                         <div key={currentUserPublication.id} className=' w-80 h-80'>
-                   
-                         {currentUserPublication.imageUrl && (
-                             <img className='w-full h-full' src={currentUserPublication.imageUrl} alt="Profile" />
-                          )}
-                     </div>
-                    ))}
                    
 
-                
+                <PublicationModal />
+
                 </div>
             </div>
         </div>

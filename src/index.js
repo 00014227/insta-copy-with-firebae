@@ -1,5 +1,5 @@
 import React from 'react';
-import { createRoot } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import 'tailwindcss/tailwind.css';
 import App from './App';
 import { AppProvider } from './contexts/AppContext';

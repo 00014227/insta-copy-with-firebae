@@ -1,66 +1,23 @@
-import { arrayRemove, arrayUnion, collection, doc, getDocs, getFirestore, updateDoc } from 'firebase/firestore';
+
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import NavBar from '../components/NavBar';
+import SubscriptionButton from '../components/SubscriptionButton ';
 import { AppContext } from '../contexts/AppContext';
 
 import { auth, db } from '../firebase';
+import { handleLike, handleSubscribe } from '../firebaseFunctions';
+
 
 const Home = () => {
-  const { userProfile, publications, updateState} = useContext(AppContext); 
-  
-  const memoizedPublications = useMemo(() => publications || [], [publications]); 
-  
+  const { userProfile, publications, updateState } = useContext(AppContext);
+
+  const memoizedPublications = useMemo(() => publications || [], [publications]);
+
   const [likeMap, setLikeMap] = useState(false);
   const [imageUrl, setImageUrl] = useState(null);
 
-  const handleLike = async (publicationId) => {
-    const db = getFirestore();
-    const publicationRef = doc(db, 'posts', publicationId); 
   
-    const publication = publications.find((pub) => pub.id === publicationId);
-    const currentLikes = publication.likes || 0;
-    const currentUserLiked = (publication.likedBy || []).includes(auth.currentUser.uid);
-  
-    if (currentUserLiked) {
-      await updateDoc(publicationRef, {
-        likes: currentLikes - 1,
-        likedBy: arrayRemove(auth.currentUser.uid),
-      });
-  
-      const updatedPublications = publications.map((pub) => {
-        if (pub.id === publicationId) {
-          return {
-            ...pub,
-            likes: currentLikes - 1,
-            likedBy: (pub.likedBy || []).filter((userId) => userId !== auth.currentUser.uid),
-          };
-        }
-        return pub;
-      });
-  
-      updateState(updatedPublications);
-      
-    } else {
-      await updateDoc(publicationRef, {
-        likes: currentLikes + 1,
-        likedBy: arrayUnion(auth.currentUser.uid), 
-      });
-  
-      const updatedPublications = publications.map((pub) => {
-        if (pub.id === publicationId) {
-          return {
-            ...pub,
-            likes: currentLikes + 1,
-            likedBy: [...(pub.likedBy || []), auth.currentUser.uid],
-          };
-        }
-        return pub;
-      });
-    
-      updateState(updatedPublications);
-      
-    }
-  };
+
 
   if (!userProfile || !publications) {
     return (
@@ -79,29 +36,34 @@ const Home = () => {
   return (
     <div className="flex">
       <NavBar
-        
+
         imageUrl={userProfile.imageUrl}
       />
       <div className="max-w-lg w-full mx-auto">
-       
+
 
         <div>
           {memoizedPublications.map((publication) => (
-            <article 
-            key={publication.id}
-            className="border-b border-solid mt-3">
-              <div className="flex gap-3">
-                {publication.user.imageUrl && (
-                  <img
-                    className="rounded-full w-12 h-12"
-                    src={publication.user.imageUrl}
-                    alt="Profile"
-                  />
-                )}
+            <article
+              key={publication.id}
+              className="border-b border-solid mt-3">
+              <div className="flex justify-between">
+                <div className='flex gap-3'>
+                  {publication.user.imageUrl && (
+                    <img
+                      className="rounded-full w-12 h-12"
+                      src={publication.user.imageUrl}
+                      alt="Profile"
+                    />
+                  )}
 
+                  <div className=' mr-48'>
+                    <p className="">{publication.user.name}</p>
+                    <p>{publication.place}</p>
+                  </div>
+                </div>
                 <div>
-                  <p className="">{publication.user.name}</p>
-                  <p>{publication.place}</p>
+                  <SubscriptionButton publicationUserID={publication.userID}/>
                 </div>
               </div>
               {publication.imageUrl && (
@@ -109,7 +71,7 @@ const Home = () => {
               )}
 
               <div className="flex gap-2 mt-4">
-                <button onClick={() => handleLike(publication.id)}>
+                <button onClick={() => handleLike(publication.id, updateState, publications)}>
                   {(publication.likedBy || []).includes(auth.currentUser.uid) ? (
                     <svg
                       aria-label="Не нравится"
@@ -141,8 +103,8 @@ const Home = () => {
                   )}
                 </button>
                 <button>
-                  <svg    
-                     aria-label="Комментировать"
+                  <svg
+                    aria-label="Комментировать"
                     class="x1lliihq x1n2onr6"
                     color="rgb(38, 38, 38)"
                     fill="rgb(38, 38, 38)"
@@ -213,5 +175,5 @@ const Home = () => {
 
 export default Home;
 
-                   
+
 
