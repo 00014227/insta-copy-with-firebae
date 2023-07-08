@@ -1,3 +1,4 @@
+import { deleteDoc, doc, getFirestore } from 'firebase/firestore';
 import React, { useState } from 'react';
 import { useContext } from 'react';
 import { AppContext } from '../contexts/AppContext';
@@ -8,23 +9,37 @@ const PublicationModal = () => {
   const [showModal, setShowModal] = useState(null)
 
   const [bodyVisibility, setBodyVisibility] = useState(false)
-  const { userProfile, currentUserPublications, updateState } = useContext(AppContext)
+  const { userProfile, currentUserPublications, updateState, setCurrentUserPublications } = useContext(AppContext)
 
+  
 
-  const deletePosts = async (publicationId) => {
-      console.log(publicationId)
-    // await deleteDoc(doc(db, "posts", publicationId));
+  const deletePost = async (publicationId) => {
+    console.log(publicationId)
+    // try {
+    //   const db = getFirestore();
+    //   await deleteDoc(doc(db, 'posts', publicationId));
+  
+    //   // Remove the deleted post from the currentUserPublications array
+    //   const updatedPublications = currentUserPublications.filter((publication) => publication.id !== publicationId);
+    //   setCurrentUserPublications(updatedPublications);
+  
+    //   console.log('Post deleted successfully!');
+    // } catch (error) {
+    //   console.error('Error deleting post:', error);
+    // }
   };
+
   return (
     <>
 
 
       {currentUserPublications.map((currentUserPublication) => (
+      
         <div>
           <div
             type="button"
             onClick={() => setShowModal(currentUserPublication.imageUrl)}
-            key={currentUserPublication.id}
+           
             className=' w-80 h-80 cursor-pointer'>
 
             {currentUserPublication.imageUrl && (
@@ -54,7 +69,7 @@ const PublicationModal = () => {
 
                           </div>
                           <button
-                          onClick={() => deletePosts(currentUserPublication.id)}
+                          onClick={() => deletePost(currentUserPublication.id)}
                           className=' text-red-500 text-lg mr-6'>Delete</button>
                         </div>
 

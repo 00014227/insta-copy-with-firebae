@@ -92,7 +92,7 @@ const AppProvider = ({ children }) => {
   };
 
   return (
-    <AppContext.Provider value={{ userProfile, publications, currentUserPublications, updateState }}>
+    <AppContext.Provider value={{ userProfile, publications, currentUserPublications, updateState, setCurrentUserPublications }}>
       {children}
     </AppContext.Provider>
   );

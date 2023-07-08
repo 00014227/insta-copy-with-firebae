@@ -68,7 +68,7 @@ const LikeModalList = ({ publication }) => {
                                                 <p>{user.name}</p>
                                             </div>
                                         </div>
-                                        <SubscriptionButton publicationUserID={user.following} />
+                                        <SubscriptionButton publicationUserID={publication.userID} />
                                     </div>
                                 ))
                             ) : (

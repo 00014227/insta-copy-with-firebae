@@ -40,12 +40,12 @@ const Profile = () => {
 
                             <div className='flex gap-14 mt-8'>
                                 <div className='flex gap-1'>
-                                    <span className=' text-lg font-semibold'>8</span>
+                                    <span className=' text-lg font-semibold'>{currentUserPublications.length}</span>
                                     <p className='text-lg'>публикаций</p>
                                 </div>
 
                                 <button className='flex gap-1'>
-                                    <span className=' text-lg font-semibold'>227</span>
+                                    <span className=' text-lg font-semibold'>{userProfile.following.length}</span>
                                     <p className='text-lg'>подписчиков</p>
                                 </button>
 

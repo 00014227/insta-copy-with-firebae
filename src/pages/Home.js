@@ -1,5 +1,6 @@
 
 import React, { useContext, useEffect, useMemo, useState } from 'react';
+import LikeModalList from '../components/LikeModalList';
 import NavBar from '../components/NavBar';
 import SubscriptionButton from '../components/SubscriptionButton ';
 import { AppContext } from '../contexts/AppContext';
@@ -16,7 +17,7 @@ const Home = () => {
   const [likeMap, setLikeMap] = useState(false);
   const [imageUrl, setImageUrl] = useState(null);
 
-  
+  console.log(publications)
 
 
   if (!userProfile || !publications) {
@@ -63,7 +64,7 @@ const Home = () => {
                   </div>
                 </div>
                 <div>
-                  <SubscriptionButton publicationUserID={publication.userID}/>
+                  <SubscriptionButton publicationUserID={publication.userID} publicationID = {publication.id} />
                 </div>
               </div>
               {publication.imageUrl && (
@@ -158,7 +159,8 @@ const Home = () => {
               </div>
               <div className="flex">
                 <span>{publication.likes}</span>
-                <p>отметок "Нравится"</p>
+                <LikeModalList publication ={publication}/>
+                {/* <p>отметок "Нравится"</p> */}
               </div>
 
               <div className="flex gap-4">
