@@ -72,7 +72,7 @@ const Profile = () => {
                 <div className='flex grid gap-1 grid-cols-3 '>
                    
 
-                <PublicationModal />
+                <PublicationModal publications = {currentUserPublications}/>
 
                 </div>
             </div>

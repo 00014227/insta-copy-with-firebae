@@ -4,19 +4,18 @@ import { addDoc, collection, deleteDoc, doc, getFirestore } from 'firebase/fires
 import React, { useState } from 'react';
 import { useContext } from 'react';
 import { AppContext } from '../contexts/AppContext';
-import { auth, db } from '../firebase';
+import { auth } from '../firebase';
 import { deletePosts, handleLike } from '../firebaseFunctions';
 
-
-const PublicationModal = ({ showAlternateElement, publications, publication1  }) => {
+const PublicationModal = ({ showAlternateElement, publications, publication1 }) => {
   const [showModal, setShowModal] = useState(null)
   const [comment, setComment] = useState('')
   const [bodyVisibility, setBodyVisibility] = useState(false)
-  const { userProfile, updateState, setCurrentUserPublications } = useContext(AppContext)
-  const [currentPublicationId, setCurrentPublicationId] = useState(null);
+  const { userProfile, updateState } = useContext(AppContext)
 
 
- console.log(publications)
+
+  console.log(publications)
 
   const onCommentChange = (event) => {
     setComment(event.target.value)
@@ -25,38 +24,36 @@ const PublicationModal = ({ showAlternateElement, publications, publication1  })
 
   const deletePost = async (publicationId) => {
     console.log(publicationId)
-      try {
-        const db = getFirestore();
-        await deleteDoc(doc(db, 'posts', publicationId));
+    //   try {
+    //     const db = getFirestore();
+    //     await deleteDoc(doc(db, 'posts', publicationId));
 
-        // Remove the deleted post from the publications array
-        const updatedPublications = publications.filter((publication) => publication.id !== publicationId);
-        setCurrentUserPublications(updatedPublications);
+    //     // Remove the deleted post from the publications array
+    //     const updatedPublications = publications.filter((publication) => publication.id !== publicationId);
+    //     setpublications(updatedPublications);
 
-        console.log('Post deleted successfully!');
-      } catch (error) {
-        console.error('Error deleting post:', error);
-      }
+    //     console.log('Post deleted successfully!');
+    //   } catch (error) {
+    //     console.error('Error deleting post:', error);
+    //   }
   };
 
 
-  const SubmitComment = async (event, postID) => {
-    
-      event.preventDefault();
+  const SubmitComment = async (postID) => {
+    console.log(postID)
+    //   event.preventDefault();
 
-      try {
-        const userID = getAuth().currentUser.uid;
+    //   try {
+    //     const userID = getAuth().currentUser.uid;
 
-        const newCommentRef = await addDoc(collection(db, 'comments'), {
-          userID: userID,
-          commentText: comment,
-          postID: postID
-        })
+    //     const newCommentRef = await addDoc(collection(db, 'comments'), {
+    //       userID: userID,
+    //       commentText: comment,
 
-        console.log("Comment was succsessfuly sended")
-      } catch (error) {
-        console.log(error)
-      }
+    //     })
+    //   } catch (error) {
+
+    //   }
   }
 
   // Check if publications array is defined before mapping over it
@@ -88,11 +85,6 @@ const PublicationModal = ({ showAlternateElement, publications, publication1  })
       </button>
 
       {renderedPublications.map((publication) => {
-          const handleShowModal = (imageUrl, id) => {
-            setShowModal(imageUrl);
-            setCurrentPublicationId(id);
-          };
-       
         return (
           <div >
 
@@ -101,7 +93,7 @@ const PublicationModal = ({ showAlternateElement, publications, publication1  })
             ) : (
               <div
                 type="button"
-                onClick={() => handleShowModal(publication.imageUrl, publication.id)}
+                onClick={() => setShowModal(publication.imageUrl)}
 
                 className=' w-80 h-80 cursor-pointer'>
 
@@ -109,7 +101,7 @@ const PublicationModal = ({ showAlternateElement, publications, publication1  })
                   <img className='w-full h-full' src={publication.imageUrl} alt="Profile" />
                 )}
 
-                <p>{currentPublicationId}</p>
+                <p>{publication.id}</p>
               </div>
             )}
 
@@ -131,13 +123,13 @@ const PublicationModal = ({ showAlternateElement, publications, publication1  })
                           <div className='flex justify-between border-b border-gray-300 pt-4 pb-4 pl-6 '>
                             <div className="flex gap-6">
                               {userProfile.imageUrl && (
-                                <img className="rounded-full w-10 h-10" src={publication.imageUrl} alt="Profile" />
+                                <img className="rounded-full w-10 h-10" src={userProfile.imageUrl} alt="Profile" />
                               )}
-                              <p className="font-semibold  text-lg my-auto">{publication.username}</p>
+                              <p className="font-semibold  text-lg my-auto">{userProfile.username}</p>
 
                             </div>
                             <button
-                              onClick={() => deletePost(currentPublicationId)}
+                              onClick={() => deletePost(publication.id)}
                               className=' text-red-500 text-lg mr-6'>Delete</button>
                           </div>
 
@@ -148,7 +140,7 @@ const PublicationModal = ({ showAlternateElement, publications, publication1  })
                             <p className="text-lg font-semibold">{userProfile.username}</p>
                             <p className=' justify-end'>The sexy boy</p>
                           </div>
-                          <p>{currentPublicationId}</p>
+                          <p>{publication.id}</p>
                           <div className="flex gap-2 mt-4">
                             <button onClick={() => handleLike(publication.id, updateState, publications)}>
                               {(publication.likedBy || []).includes(auth.currentUser.uid) ? (
@@ -246,7 +238,7 @@ const PublicationModal = ({ showAlternateElement, publications, publication1  })
                               onChange={onCommentChange}
                               rows="2" cols="60" name="comment" form="usrform" className='focus:outline-none' placeholder='Добавьте коментарий'>
                             </textarea>
-                            <button onClick={(event) => SubmitComment(event, publication.id)} className=' mr-8 text-blue-400 font-semibold text-xl'>Опубликовать</button>
+                            <button onClick={() => SubmitComment(publication.id)} className=' mr-8 text-blue-400 font-semibold text-xl'>Опубликовать</button>
                           </div>
 
                         </div>

@@ -8,6 +8,7 @@ import { getFirestore, doc, getDoc, getDocs, collection, where, query } from 'fi
 import NavBar from './components/NavBar';
 import { getPosts } from './firebaseFunctions';
 import Profile from './pages/Profile';
+import Asd from './pages/Asd';
 
 function App() {
 
@@ -24,6 +25,7 @@ function App() {
             <Route path='/signup' element={<SignUp />} />
             <Route path='/' element={<Home/>} />
             <Route path='/profile' element={<Profile />} />
+            <Route path='/test' element={<Asd/>} />
           </Routes>
         </BrowserRouter>
 

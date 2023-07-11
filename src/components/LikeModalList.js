@@ -32,7 +32,7 @@ const LikeModalList = ({ publication }) => {
         }
     }, [publication, db]);
 
-    console.log(likedUsers)
+    
 
 
 

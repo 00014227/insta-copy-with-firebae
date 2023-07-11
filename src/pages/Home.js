@@ -2,6 +2,7 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import LikeModalList from '../components/LikeModalList';
 import NavBar from '../components/NavBar';
+import PublicationModal from '../components/PublicationModal';
 import SubscriptionButton from '../components/SubscriptionButton ';
 import { AppContext } from '../contexts/AppContext';
 
@@ -12,12 +13,12 @@ import { handleLike, handleSubscribe } from '../firebaseFunctions';
 const Home = () => {
   const { userProfile, publications, updateState } = useContext(AppContext);
 
-  const memoizedPublications = useMemo(() => publications || [], [publications]);
+ 
 
   const [likeMap, setLikeMap] = useState(false);
   const [imageUrl, setImageUrl] = useState(null);
 
-  console.log(publications)
+ 
 
 
   if (!userProfile || !publications) {
@@ -44,12 +45,14 @@ const Home = () => {
 
 
         <div>
-          {memoizedPublications.map((publication) => (
+          {publications.map((publication) => (
+          
             <article
               key={publication.id}
               className="border-b border-solid mt-3">
               <div className="flex justify-between">
                 <div className='flex gap-3'>
+                
                   {publication.user.imageUrl && (
                     <img
                       className="rounded-full w-12 h-12"
@@ -64,7 +67,7 @@ const Home = () => {
                   </div>
                 </div>
                 <div>
-                  <SubscriptionButton publicationUserID={publication.userID} publicationID = {publication.id} />
+                <SubscriptionButton publicationUserID={publication.userID} publicationID = {publication.id} />
                 </div>
               </div>
               {publication.imageUrl && (
@@ -103,27 +106,7 @@ const Home = () => {
                     </svg>
                   )}
                 </button>
-                <button>
-                  <svg
-                    aria-label="Комментировать"
-                    class="x1lliihq x1n2onr6"
-                    color="rgb(38, 38, 38)"
-                    fill="rgb(38, 38, 38)"
-                    height="24"
-                    role="img"
-                    viewBox="0 0 24 24"
-                    width="24"
-                  >
-                    <title>Комментировать</title>
-                    <path
-                      d="M20.656 17.008a9.993 9.993 0 1 0-3.59 3.615L22 22Z"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                    ></path>
-                  </svg>
-                </button>
+                    <PublicationModal showAlternateElement={true} publications={publications} publication1={publication}/>
 
                 <button>
                   <svg
