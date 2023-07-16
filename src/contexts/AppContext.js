@@ -66,15 +66,28 @@ const AppProvider = ({ children }) => {
         const currentUserPublicationsRef = collection(db, 'posts');
         const currentUserPublicationsQuery = query(currentUserPublicationsRef, where('userID', '==', user.uid));
         const publicationsCacheKey = `publications_${user.uid}`;
-        const fetchPublications = async () => {
+        
+        const fetchCurrentUserPublications = async () => {
+          const currentUser = getAuth().currentUser;
+        
+          // Fetch current user's data
+          const userDocRef = doc(db, 'profile', currentUser.uid);
+          const userDoc = await getDoc(userDocRef);
+          const userData = userDoc.data();
+        
+          // Fetch current user's publications
           const publicationsSnapshot = await getDocs(currentUserPublicationsQuery);
-          return publicationsSnapshot.docs.map((doc) => ({
+          const currentUserPublications = publicationsSnapshot.docs.map((doc) => ({
             id: doc.id,
             ...doc.data(),
+            user: userData, // Include current user's data
           }));
+        
+          return currentUserPublications;
         };
-        const currentUserPublicationsData = await fetchData(publicationsCacheKey, fetchPublications);
-        setCurrentUserPublications(currentUserPublicationsData);
+        
+        const currentUserPublicationsWithUserData = await fetchData(publicationsCacheKey, fetchCurrentUserPublications);
+        setCurrentUserPublications(currentUserPublicationsWithUserData);
 
         // Get all publications
         await fetchAllPublications(db, setPublications);

@@ -1,49 +1,49 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { AppContext } from '../contexts/AppContext';
-import { getFirestore, doc, getDoc, query, collection, where, getDocs, writeBatch } from 'firebase/firestore';
+import { doc, getDoc, getFirestore } from 'firebase/firestore';
+import React, { useEffect, useState } from 'react';
 import SubscriptionButton from './SubscriptionButton ';
 
 
-const LikeModalList = ({ publication }) => {
+const FollowersModal = ({userProfile}) => {
     const [showModal, setShowModal] = useState(false);
-    const [likedUsers, setLikedUsers] = useState([]);
-    
-    
+    const [followersUsers, setfollowersUsers] = useState([]);
+
+
     const db = getFirestore();
 
     useEffect(() => {
-        if (publication && publication.likedBy && publication.likedBy.length > 0) {
-          // Fetch liked users for the publication
-          const fetchLikedUsers = async () => {
-            const likedUsersPromises = publication.likedBy.map(async (userId) => {
-              const userRef = doc(db, 'profile', userId);
-              const userDoc = await getDoc(userRef);
-              if (userDoc.exists()) {
-                return { id: userId, data: userDoc.data() };
-              }
-              return null;
-            });
     
-            const likedUsersData = await Promise.all(likedUsersPromises);
-            const filteredLikedUsers = likedUsersData.filter((user) => user !== null);
-            setLikedUsers(filteredLikedUsers);
-          };
-    
-          fetchLikedUsers();
-        }
-      }, [publication, db]);
+            // Fetch liked users for the publication
+            const fetchfollowersUsers = async () => {
+                const followngUsersPromises = userProfile.followers.map(async (userId) => {
+                    const userRef = doc(db, 'profile', userId);
+                    const userDoc = await getDoc(userRef);
+                    if (userDoc.exists()) {
+                        return { id: userId, data: userDoc.data() };
+                    }
+                    return null;
+                });
 
-    // console.log(likedUsers, 'ppppppppppppppppppp')
+                const followersUsersData = await Promise.all(followngUsersPromises);
+                const filteredFollowersUsers = followersUsersData.filter((user) => user !== null);
+                setfollowersUsers(filteredFollowersUsers);
+          
+
+               
+        }
+
+        fetchfollowersUsers();
+    }, [userProfile, db]);
+
+
 
 
     return (
         <>
-            <button
-                className=""
-                type="button"
-                onClick={() => setShowModal(true)}
-            >
-                Отметок "Нравится"
+            <button 
+            onClick={() => setShowModal(true)}
+            className='flex gap-1'>
+                <span className=' text-lg font-semibold'>{userProfile.followers.length}</span>
+                <p className='text-lg'>подписчиков</p>
             </button>
 
             {showModal && (
@@ -52,13 +52,13 @@ const LikeModalList = ({ publication }) => {
                     <div className="fixed inset-0 z-50 flex items-center justify-center">
                         <div className="bg-white rounded-lg p-4">
                             <div className='flex gap-20 my-auto'>
-                                <h3 className="text-2xl font-semibold mb-4">Отметки "Нравится"</h3>
+                                <h3 className="text-2xl font-semibold mb-4">Ваши подписки</h3>
 
                                 <button className=' mb-6 text-3xl '
                                     onClick={() => setShowModal(false)}>X</button>
                             </div>
-                            {likedUsers.length > 0 ? (
-                                likedUsers.map((user) => (
+                            {followersUsers.length > 0 ? (
+                                followersUsers.map((user) => (
                                     <div key={user.id} className="flex items-center justify-between mb-2">
                                         <div className="flex items-center gap-3">
                                             {user.data.imageUrl && (
@@ -69,6 +69,7 @@ const LikeModalList = ({ publication }) => {
                                             </div>
                                         </div>
                                         <SubscriptionButton publicationUserID={user.id} />
+                                        
                                     </div>
                                 ))
                             ) : (
@@ -89,4 +90,4 @@ const LikeModalList = ({ publication }) => {
     );
 };
 
-export default LikeModalList;
+export default FollowersModal;

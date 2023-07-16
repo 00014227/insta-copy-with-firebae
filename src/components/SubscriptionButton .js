@@ -1,10 +1,11 @@
-import { collection, doc, getDoc, getDocs, getFirestore, query, updateDoc, where, writeBatch, onSnapshot } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, getFirestore, query, updateDoc, where, writeBatch, onSnapshot, arrayUnion, arrayRemove } from 'firebase/firestore';
 import React, { useState, useEffect } from 'react';
 import { auth } from '../firebase';
 
 const SubscriptionButton = ({ publicationUserID }) => {
+  console.log(publicationUserID, 'aaaaaaaaaaaaaaaaa')
   const [isSubscribed, setIsSubscribed] = useState(false);
-  
+
   useEffect(() => {
     // Check subscription status when the component mounts
     checkSubscriptionStatus();
@@ -25,8 +26,8 @@ const SubscriptionButton = ({ publicationUserID }) => {
     const profileSnapshot = await getDoc(profileRef);
 
     if (profileSnapshot.exists()) {
-      const following = profileSnapshot.data().following || [];
-      setIsSubscribed(following.includes(auth.currentUser.uid));
+      const followers = profileSnapshot.data().followers || [];
+      setIsSubscribed(followers.includes(auth.currentUser.uid));
     }
   };
 
@@ -35,54 +36,49 @@ const SubscriptionButton = ({ publicationUserID }) => {
     const profileRef = doc(db, 'profile', publicationUserID);
     return onSnapshot(profileRef, (snapshot) => {
       if (snapshot.exists()) {
-        const following = snapshot.data().following || [];
-        setIsSubscribed(following.includes(auth.currentUser.uid));
+        const followers = snapshot.data().followers || [];
+        setIsSubscribed(followers.includes(auth.currentUser.uid));
       }
     });
   };
 
   const handleSubscription = async () => {
     const db = getFirestore();
+    const currentUserID = auth.currentUser.uid;
     const profileRef = doc(db, 'profile', publicationUserID);
-    const profileSnapshot = await getDoc(profileRef);
+    const currentUserProfileRef = doc(db, 'profile', currentUserID);
 
-    if (profileSnapshot.exists()) {
-      const following = profileSnapshot.data().following || [];
-      const updatedFollowing = [...following]; // Create a copy of the following array
+    const profileSnapshot = await getDoc(profileRef);
+    const currentUserProfileSnapshot = await getDoc(currentUserProfileRef);
+
+    if (profileSnapshot.exists() && currentUserProfileSnapshot.exists()) {
+      const followers = profileSnapshot.data().followers || [];
+      const updatedFollowers = [...followers]; // Create a copy of the followers array
 
       if (isSubscribed) {
         // Unsubscribe
-        const index = updatedFollowing.indexOf(auth.currentUser.uid);
+        const index = updatedFollowers.indexOf(currentUserID);
         if (index > -1) {
-          updatedFollowing.splice(index, 1);
+          updatedFollowers.splice(index, 1);
         }
         setIsSubscribed(false);
         console.log('Unsubscribed successfully!');
       } else {
         // Subscribe
-        updatedFollowing.push(auth.currentUser.uid);
+        updatedFollowers.push(currentUserID);
         setIsSubscribed(true);
         console.log('Subscribed successfully!');
       }
 
-      // Update following for other posts by the same user
-      const postsQuery = query(collection(db, 'posts'), where('userID', '==', publicationUserID));
-      const postsSnapshot = await getDocs(postsQuery);
+      // Update followers for the user being subscribed to
+      await updateDoc(profileRef, { followers: updatedFollowers });
 
-      if (!postsSnapshot.empty) {
-        const batch = writeBatch(db);
-        postsSnapshot.forEach((postDoc) => {
-          const postRef = doc(db, 'posts', postDoc.id);
-          batch.update(postRef, { following: updatedFollowing });
-        });
+      // Update following for the current user
+      await updateDoc(currentUserProfileRef, {
+        following: isSubscribed ? arrayRemove(publicationUserID) : arrayUnion(publicationUserID),
+      });
 
-        await batch.commit();
-        console.log('Updated following for other posts successfully!');
-      }
-
-      // Update following for the profile
-      await updateDoc(profileRef, { following: updatedFollowing });
-      console.log('Updated following for profile successfully!');
+      console.log('Updated followers and following successfully!');
     }
   };
 

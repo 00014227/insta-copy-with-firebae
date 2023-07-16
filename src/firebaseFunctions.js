@@ -13,7 +13,24 @@ export async function doesUsernameExist(username) {
 }
 
 
+export const fetchCommentsWithUser = async (postId) => {
+  console.log(postId, 'eeeeeeeeeeeeee')
+  const commentsRef = collection(db, 'comments');
+  const commentsQuery = query(commentsRef, where('postID', '==', postId));
 
+  const commentsSnapshot = await getDocs(commentsQuery);
+  const commentsData = [];
+
+  for (const commentDoc of commentsSnapshot.docs) {
+    const comment = commentDoc.data();
+    const userDoc = await getDoc(doc(db, 'profile', comment.userID));
+    const user = userDoc.exists() ? userDoc.data() : null;
+
+    commentsData.push({ ...comment, user });
+  }
+  
+  return commentsData;
+};
 
 export const getPosts = async () => {
   try {

@@ -1,6 +1,8 @@
 import { async } from '@firebase/util';
 import { doc, getDoc, getFirestore } from 'firebase/firestore';
 import React, { useContext, useEffect, useState } from 'react';
+import FollowersModal from '../components/FollowersModal';
+import FollowingModal from '../components/FollowingModal';
 import NavBar from '../components/NavBar';
 import PublicationModal from '../components/PublicationModal';
 import { AppContext } from '../contexts/AppContext';
@@ -8,6 +10,8 @@ import { AppContext } from '../contexts/AppContext';
 const Profile = () => {
 
     const { userProfile, currentUserPublications } = useContext(AppContext)
+
+
 
     if (!userProfile || !currentUserPublications) {
         return (
@@ -44,15 +48,9 @@ const Profile = () => {
                                     <p className='text-lg'>публикаций</p>
                                 </div>
 
-                                <button className='flex gap-1'>
-                                    <span className=' text-lg font-semibold'>{userProfile.following.length}</span>
-                                    <p className='text-lg'>подписчиков</p>
-                                </button>
+                                <FollowersModal userProfile = {userProfile}/>
 
-                                <button className='flex gap-1'>
-                                    <span className=' text-lg font-semibold'>257</span>
-                                    <p className='text-lg'>подписок</p>
-                                </button>
+                               <FollowingModal userProfile = {userProfile}/>
                             </div>
 
                             <p className=' text-lg font-semibold mt-7'>{userProfile.name}</p>
@@ -72,7 +70,7 @@ const Profile = () => {
                 <div className='flex grid gap-1 grid-cols-3 '>
                    
 
-                <PublicationModal publications = {currentUserPublications}/>
+                <PublicationModal publications = {currentUserPublications} />
 
                 </div>
             </div>

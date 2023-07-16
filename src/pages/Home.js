@@ -106,7 +106,7 @@ const Home = () => {
                     </svg>
                   )}
                 </button>
-                    <PublicationModal showAlternateElement={true} publications={publications} publication1={publication}/>
+                    <PublicationModal showAlternateElement={true} publications={publications} publication1={publication}  />
 
                 <button>
                   <svg
