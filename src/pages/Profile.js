@@ -10,7 +10,7 @@ import { AppContext } from '../contexts/AppContext';
 const Profile = () => {
 
     const { userProfile, currentUserPublications } = useContext(AppContext)
-
+    console.log(userProfile, 'nnnnnnnnnnnnnnn')
 
 
     if (!userProfile || !currentUserPublications) {
@@ -27,19 +27,21 @@ const Profile = () => {
         );
     }
     return (
-        <div className='flex'>
-            <NavBar />
+        <div className='flex gap-10'>
+            <NavBar imageUrl={userProfile.imageUrl}/>
 
-            <div className=' max-w-5xl mx-auto'>
+            <div className=' max-w-5xl mx-auto px-8'>
                 <header className=' mt-12'>
-                    <div className='flex gap-28'>
+                    <div className='flex mt:gap-28 gap-10'>
 
-                        {userProfile.imageUrl && <img className=' rounded-full w-52 h-52 ' src={userProfile.imageUrl} alt="Profile" />}
+                        {userProfile.imageUrl && <img className=' rounded-full md:w-48 md:h-48 w-24 h-24' src={userProfile.imageUrl} alt="Profile" />}
                         <div className=''>
-                            <div className='flex gap-3 my-auto'>
+                            <div className='md:flex gap-3 my-auto'>
                                 <p className=' text-2xl my-auto'>{userProfile.username}</p>
+                                <div className='mt-8'>
                                 <button className=' bg-gray-300 pr-4 pl-4 pt-2 pb-2 text-xl font-semibold rounded-xl'>Режактировать профиль</button>
-                                <button className=' bg-gray-300 pr-4 pl-4 pt-2 pb-2 text-xl font-semibold rounded-xl'>Отправить сообщения</button>
+                                <button className=' bg-gray-300 pr-4 pl-4 pt-2 pb-2 text-xl font-semibold rounded-xl mt-4'>Отправить сообщения</button>
+                                </div>
                             </div>
 
                             <div className='flex gap-14 mt-8'>
@@ -67,11 +69,11 @@ const Profile = () => {
                     <p>ОТМЕТКИ</p>
                 </div>
                 
-                <div className='flex grid gap-1 grid-cols-3 '>
+                <div className='md:flex md:grid w-96 gap-1 grid-cols-3   '>
                    
-
+            
                 <PublicationModal publications = {currentUserPublications} />
-
+            
                 </div>
             </div>
         </div>

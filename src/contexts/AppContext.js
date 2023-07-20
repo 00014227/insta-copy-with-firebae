@@ -3,6 +3,8 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { getFirestore, doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import { getPosts } from '../firebaseFunctions';
 
+
+
 export const AppContext = createContext();
 
 const cache = {};
@@ -43,6 +45,7 @@ const AppProvider = ({ children }) => {
   const [userProfile, setUserProfile] = useState(null);
   const [publications, setPublications] = useState(null);
   const [currentUserPublications, setCurrentUserPublications] = useState([]);
+
 
   useEffect(() => {
     const auth = getAuth();

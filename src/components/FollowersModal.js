@@ -50,7 +50,7 @@ const FollowersModal = ({userProfile}) => {
                 <>
                     {/* Modal content */}
                     <div className="fixed inset-0 z-50 flex items-center justify-center">
-                        <div className="bg-white rounded-lg p-4">
+                        <div className="bg-white rounded-lg p-4 md:w-auto md:h-auto w-screen h-screen">
                             <div className='flex gap-20 my-auto'>
                                 <h3 className="text-2xl font-semibold mb-4">Ваши подписки</h3>
 

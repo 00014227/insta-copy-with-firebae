@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { auth } from '../firebase';
 
 const SubscriptionButton = ({ publicationUserID }) => {
-  console.log(publicationUserID, 'aaaaaaaaaaaaaaaaa')
+ 
   const [isSubscribed, setIsSubscribed] = useState(false);
 
   useEffect(() => {
@@ -85,11 +85,11 @@ const SubscriptionButton = ({ publicationUserID }) => {
   return (
     <div>
       {isSubscribed ? (
-        <button className='bg-red-500 text-white text-lg px-3 rounded-md font-semibold' onClick={handleSubscription}>
+        <button className='bg-red-500 text-white md:text-lg text-sm px-3 rounded-md font-semibold w-auto' onClick={handleSubscription}>
           Unsubscribe
         </button>
       ) : (
-        <button className='bg-blue-500 text-white text-lg px-3 rounded-md font-semibold' onClick={handleSubscription}>
+        <button className='bg-blue-500 text-white text-lg px-3 rounded-md font-semibold w-auto' onClick={handleSubscription}>
           Subscribe
         </button>
       )}

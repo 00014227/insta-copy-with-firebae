@@ -1,5 +1,5 @@
-
 import React, { useContext, useEffect, useMemo, useState } from 'react';
+import { Link, Navigate } from 'react-router-dom';
 import LikeModalList from '../components/LikeModalList';
 import NavBar from '../components/NavBar';
 import PublicationModal from '../components/PublicationModal';
@@ -13,7 +13,7 @@ import { handleLike, handleSubscribe } from '../firebaseFunctions';
 const Home = () => {
   const { userProfile, publications, updateState } = useContext(AppContext);
 
- 
+
 
   const [likeMap, setLikeMap] = useState(false);
   const [imageUrl, setImageUrl] = useState(null);
@@ -41,7 +41,7 @@ const Home = () => {
 
         imageUrl={userProfile.imageUrl}
       />
-      <div className="max-w-lg w-full mx-auto">
+      <div className=" max-w-lg w-full mx-auto">
 
 
         <div>
@@ -61,8 +61,10 @@ const Home = () => {
                     />
                   )}
 
-                  <div className=' mr-48'>
-                    <p className="">{publication.user.name}</p>
+                  <div className=' justify-between'>
+                    <Link to={`/profile/${publication.userID}`}>
+                    <p> {publication.user.name}</p>
+                    </Link>
                     <p>{publication.place}</p>
                   </div>
                 </div>
@@ -71,7 +73,7 @@ const Home = () => {
                 </div>
               </div>
               {publication.imageUrl && (
-                <img className="mt-4" src={publication.imageUrl} alt="Profile" />
+                <img className="mt-4 w-full" src={publication.imageUrl} alt="Profile" />
               )}
 
               <div className="flex gap-2 mt-4">
@@ -147,7 +149,7 @@ const Home = () => {
               </div>
 
               <div className="flex gap-4">
-                <p className="font-medium">{userProfile.name}</p>
+                <p className="font-medium">{publication.user.name}</p>
                 <p>{publication.description}</p>
               </div>
             </article>
