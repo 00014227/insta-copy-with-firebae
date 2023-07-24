@@ -9,7 +9,7 @@ import firebase from 'firebase/compat/app'
 
 const ModalHeading = () => {
   const [showModal, setShowModal] = useState(false)
-  const [showModal2, setShowModal2] = useState(false)
+  const [showModal2, setShowModal2] = useState({isLargeScreen: false})
   const [bodyVisibility, setBodyVisibility] = useState(false)
   const [loading, setLoading] = useState(false);
 
@@ -86,6 +86,13 @@ const ModalHeading = () => {
     }
   };
 
+  const formVisibility = () => {
+    const isLargeScreen = window.innerWidth >= 768;
+
+    if (!isLargeScreen) {
+      setShowModal2({isLargeScreen: true});
+    }
+  }
 
   return (
     <>
@@ -126,7 +133,7 @@ const ModalHeading = () => {
                   <h3 className="text-3xl font-semibold text-center">
                     Создание публикации
                   </h3>
-                  <button onClick={() => setShowModal2(true)} className=' text-blue-600 text-lg my-auto'>
+                  <button onClick={() => formVisibility()} className=' text-blue-600 text-lg my-auto'>
                     Next
                   </button>
                 </div>
@@ -161,12 +168,15 @@ const ModalHeading = () => {
                     </div>)
                 }
                 {/* inputs block */}
-                <PublicationForm
+                {showModal2 && (
+                    <PublicationForm
 
-                  place={inputs.place} onPlaceChange={onPlaceChange}
-                  description={inputs.description} onDescriptionChange={onDescriptionChange}
-
-                  onSubmit={submit} />
+                    place={inputs.place} onPlaceChange={onPlaceChange}
+                    description={inputs.description} onDescriptionChange={onDescriptionChange}
+  
+                    onSubmit={submit} />
+                )}
+                
               </div>
               )}
              

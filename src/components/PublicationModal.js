@@ -20,12 +20,13 @@ import {
 import SubscriptionButton from './SubscriptionButton ';
 import LikeModalList from './LikeModalList';
 
-const PublicationModal = ({ publications, publication1 }) => {
+const PublicationModal = ({ publications, publication1, userProfile }) => {
+
   const [showModal, setShowModal] = useState({ isLargeScreen: false, imageUrl: null });
 
   const [comment, setComment] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { userProfile, updateState, setCurrentUserPublications } = useContext(AppContext);
+  const { updateState, setCurrentUserPublications } = useContext(AppContext);
   const [currentPublicationId, setCurrentPublicationId] = useState(null);
   const [comments, setComments] = useState([]);
 

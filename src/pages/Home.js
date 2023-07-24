@@ -1,27 +1,25 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react';
-import { Link, Navigate } from 'react-router-dom';
+import React, { useContext } from 'react';
+import { Link } from 'react-router-dom';
 import LikeModalList from '../components/LikeModalList';
 import NavBar from '../components/NavBar';
 import PublicationModal from '../components/PublicationModal';
 import SubscriptionButton from '../components/SubscriptionButton ';
 import { AppContext } from '../contexts/AppContext';
 
-import { auth, db } from '../firebase';
-import { handleLike, handleSubscribe } from '../firebaseFunctions';
+import { auth} from '../firebase';
+import { handleLike } from '../firebaseFunctions';
 
 
 const Home = () => {
-  const { userProfile, publications, updateState } = useContext(AppContext);
+  const {  publications, updateState } = useContext(AppContext);
 
+console.log(publications)
 
-
-  const [likeMap, setLikeMap] = useState(false);
-  const [imageUrl, setImageUrl] = useState(null);
 
  
 
 
-  if (!userProfile || !publications) {
+  if ( !publications) {
     return (
       <div class="h-screen bg-white">
         <div class="flex justify-center items-center h-full">
@@ -39,7 +37,7 @@ const Home = () => {
     <div className="flex">
       <NavBar
 
-        imageUrl={userProfile.imageUrl}
+  
       />
       <div className=" max-w-lg w-full mx-auto">
 

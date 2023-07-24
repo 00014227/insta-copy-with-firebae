@@ -1,8 +1,7 @@
 import { getFirestore, collection, query, where, getDocs, getDoc, doc, updateDoc, arrayRemove, arrayUnion, deleteDoc } from 'firebase/firestore';
-import { getDatabase, ref, get } from 'firebase/database';
-import { auth, db, storage } from './firebase'; // Import the Firebase database instance
-import { getDownloadURL, uploadBytesResumable } from 'firebase/storage';
-import { async } from '@firebase/util';
+
+import { auth, db } from './firebase'; 
+
 
 export async function doesUsernameExist(username) {
   const firestore = getFirestore();
@@ -14,7 +13,7 @@ export async function doesUsernameExist(username) {
 
 
 export const fetchCommentsWithUser = async (postId) => {
-  console.log(postId, 'eeeeeeeeeeeeee')
+
   const commentsRef = collection(db, 'comments');
   const commentsQuery = query(commentsRef, where('postID', '==', postId));
 
@@ -102,23 +101,4 @@ export  const handleLike = async (publicationId, updateState, publications) => {
 
 
 
-// export const handleSubscribe = async (publicationUserID) => {
-//   const db = getFirestore();
-//   const profileRef = doc(db, 'profile', publicationUserID);
-//   const profileSnapshot = await getDoc(profileRef);
 
-//   // Check if the current user is already subscribed
-//   const following = profileSnapshot.data().following || []; // Provide a default empty array if `following` is undefined
-//   const isSubscribed = following.includes(auth.currentUser?.uid || ''); // Check if `following` is an array and use optional chaining and nullish coalescing to handle undefined or null values
-
-//   if (isSubscribed) {
-//     // Unsubscribe
-//     const updatedFollowing = following.filter((userId) => userId !== auth.currentUser?.uid);
-//     await updateDoc(profileRef, { following: updatedFollowing });
-//     console.log('Unsubscribed successfully!');
-//   } else {
-//     // Subscribe
-//     await updateDoc(profileRef, { following: [...following, auth.currentUser?.uid || ''] });
-//     console.log('Subscribed successfully!');
-//   }
-// };

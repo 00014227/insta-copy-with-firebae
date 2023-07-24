@@ -1,14 +1,9 @@
-import { useEffect, useState } from 'react';
-import { BrowserRouter, Link, Route, Routes } from 'react-router-dom';
+import { BrowserRouter,  Route, Routes } from 'react-router-dom';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
-import { getFirestore, doc, getDoc, getDocs, collection, where, query } from 'firebase/firestore';
-import NavBar from './components/NavBar';
-import { getPosts } from './firebaseFunctions';
 import Profile from './pages/Profile';
-import Asd from './pages/Asd';
+
 
 function App() {
 
@@ -25,7 +20,7 @@ function App() {
             <Route path='/signup' element={<SignUp />} />
             <Route path='/' element={<Home/>} />
             <Route path='/profile/:id' element={<Profile />} />
-            <Route path='/test' element={<Asd/>} />
+        
           </Routes>
         </BrowserRouter>
 
