@@ -1,71 +1,66 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
-import { getFirestore, doc, batchGetDocs, getDoc } from 'firebase/firestore';
+import { getFirestore, doc, batchGetDocs, getDoc, collection, getDocs } from 'firebase/firestore';
+import { db } from '../firebase';
 import { getPosts } from '../firebaseFunctions';
-
 
 
 export const AppContext = createContext();
 
-const cache = {};
+const ITEMS_PER_PAGE = 3;
 
-
-
-const fetchAllPublications = async (db, setPublications) => {
+const fetchAllPublications = async (page, existingPublications) => {
   try {
-    const data = await getPosts(); // Assuming getPosts is an efficient function to fetch publications
+    const startIndex = (page - 1) * ITEMS_PER_PAGE;
+    const data = await getPosts();
 
-    if (data && data.length > 0) {
-      const publicationUserPromises = data.map(async (publication) => {
-        const userDocRef = doc(db, 'profile', publication.userID);
-        const userDoc = await getDoc(userDocRef);
-        const userData = userDoc.data();
-        return {
-          ...publication,
-          user: userData,
-        };
-      });
+    const publications = data.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
-      const publicationsWithUser = await Promise.all(publicationUserPromises);
-      setPublications(publicationsWithUser);
-    } else {
-      setPublications([]);
-    }
+    const publicationUserPromises = publications.map(async (publication) => {
+      const userDocRef = doc(db, 'profile', publication.userID);
+      const userDoc = await getDoc(userDocRef);
+      const userData = userDoc.data();
+      return {
+        ...publication,
+        user: userData,
+      };
+    });
+
+    const publicationsWithUser = await Promise.all(publicationUserPromises);
+    return [...existingPublications, ...publicationsWithUser];
   } catch (error) {
-    // Handle any errors here
     console.error('Error fetching publications:', error);
-    setPublications([]);
+    return existingPublications;
   }
 };
 
-
-
 const AppProvider = ({ children }) => {
-
-
-  const [publications, setPublications] = useState(null);
-console.log(publications)
-
+  const [publications, setPublications] = useState([]);
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
-    const auth = getAuth();
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
+    fetchAllPublications(page, publications).then((newPublications) => {
+      setPublications(newPublications);
+    });
+  }, [page]);
+
+  const handleScroll = () => {
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const scrollHeight = document.documentElement.scrollHeight;
+    const clientHeight = document.documentElement.clientHeight;
+    
+    // Check if the user is near the end of the content
+    if (scrollHeight - (scrollTop + clientHeight) < 100) {
+      setPage((prevPage) => prevPage + 1);
+    }
+  };
   
 
-        const db = getFirestore();
-
-    
-
-     
-
-        // Get all publications
-        await fetchAllPublications(db, setPublications);
-      } else {
-    
-        setPublications(null);
-      }
-    });
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, []);
 
   const updateState = (newValue) => {
@@ -73,7 +68,7 @@ console.log(publications)
   };
 
   return (
-    <AppContext.Provider value={{  publications, updateState }}>
+    <AppContext.Provider value={{ publications, updateState }}>
       {children}
     </AppContext.Provider>
   );

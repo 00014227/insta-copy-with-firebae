@@ -1,25 +1,24 @@
-import React, { useContext } from 'react';
+import React, { useContext, useRef, useState } from 'react';
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import LikeModalList from '../components/LikeModalList';
 import NavBar from '../components/NavBar';
 import PublicationModal from '../components/PublicationModal';
 import SubscriptionButton from '../components/SubscriptionButton ';
-import { AppContext } from '../contexts/AppContext';
+import { AppContext, fetchAllPublications } from '../contexts/AppContext';
 
-import { auth} from '../firebase';
+import { auth } from '../firebase';
 import { handleLike } from '../firebaseFunctions';
 
 
 const Home = () => {
-  const {  publications, updateState } = useContext(AppContext);
-
-console.log(publications)
+  const { publications, updateState } = useContext(AppContext);
 
 
- 
 
 
-  if ( !publications) {
+
+  if (!publications) {
     return (
       <div class="h-screen bg-white">
         <div class="flex justify-center items-center h-full">
@@ -37,20 +36,20 @@ console.log(publications)
     <div className="flex">
       <NavBar
 
-  
+
       />
       <div className=" max-w-lg w-full mx-auto">
 
 
         <div>
-          {publications.map((publication) => (
-          
+          {publications && publications.map((publication) => (
+
             <article
               key={publication.id}
               className="border-b border-solid mt-3">
               <div className="flex justify-between">
                 <div className='flex gap-3'>
-                
+
                   {publication.user.imageUrl && (
                     <img
                       className="rounded-full w-12 h-12"
@@ -61,13 +60,13 @@ console.log(publications)
 
                   <div className=' justify-between'>
                     <Link to={`/profile/${publication.userID}`}>
-                    <p> {publication.user.name}</p>
+                      <p> {publication.user.name}</p>
                     </Link>
                     <p>{publication.place}</p>
                   </div>
                 </div>
                 <div>
-                <SubscriptionButton publicationUserID={publication.userID} publicationID = {publication.id} />
+                  <SubscriptionButton publicationUserID={publication.userID} publicationID={publication.id} />
                 </div>
               </div>
               {publication.imageUrl && (
@@ -106,7 +105,7 @@ console.log(publications)
                     </svg>
                   )}
                 </button>
-                    <PublicationModal showAlternateElement={true} publications={publications} publication1={publication}  />
+                <PublicationModal showAlternateElement={true} publications={publications} publication1={publication} />
 
                 <button>
                   <svg
@@ -142,7 +141,7 @@ console.log(publications)
               </div>
               <div className="flex">
                 <span>{publication.likes}</span>
-                <LikeModalList publication ={publication}/>
+                <LikeModalList publication={publication} />
                 {/* <p>отметок "Нравится"</p> */}
               </div>
 
@@ -152,6 +151,9 @@ console.log(publications)
               </div>
             </article>
           ))}
+
+
+
         </div>
       </div>
     </div>

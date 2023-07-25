@@ -1,13 +1,25 @@
-import React from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+
 import ModalHeading from './ModalHeading';
-import { getAuth, signOut } from "firebase/auth";
+import { getAuth, signOut } from 'firebase/auth';
 
-const NavBar = (props, { userData }) => {
-    
+const NavBar = (props) => {
+
     const auth = getAuth();
+  
+    const [user, setUser] = useState(null);
+  
+    useEffect(() => {
+      const unsubscribe = auth.onAuthStateChanged((user) => {
+        setUser(user);
+      });
+  
+      return () => {
+        unsubscribe();
+      };
+    }, [auth]);
 
-    const user = auth.currentUser;
     function Logout() {
         const auth = getAuth();
         signOut(auth).then(() => {
@@ -15,8 +27,13 @@ const NavBar = (props, { userData }) => {
         }).catch((error) => {
             console.log("Somethig went wrong")
         });
-    }
+    } 
 
+    if (!user) {
+        return <div>Loading...</div>;
+      }
+
+      
     return (
         <div className='xl:w-96 md:w-32 w-full bg-white pl-6 pr-6 border-r border-gray-300 fixed bottom-0 left-0'>
 
