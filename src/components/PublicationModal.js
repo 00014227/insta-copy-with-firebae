@@ -12,40 +12,68 @@ import {
   getDocs,
   getDoc,
   doc,
-  updateDoc,
-  arrayRemove,
-  arrayUnion,
+
   deleteDoc,
 } from 'firebase/firestore';
 import SubscriptionButton from './SubscriptionButton ';
 import LikeModalList from './LikeModalList';
 
-const PublicationModal = ({ publications, publication1, userProfile }) => {
+const PublicationModal = ({ publications, publication1, userProfile, setCurrentUserPublications }) => {
 
   const [showModal, setShowModal] = useState({ isLargeScreen: false, imageUrl: null });
 
   const [comment, setComment] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { updateState, setCurrentUserPublications } = useContext(AppContext);
+  const { updateState } = useContext(AppContext);
   const [currentPublicationId, setCurrentPublicationId] = useState(null);
   const [comments, setComments] = useState([]);
 
-  const [activeButton, setActiveButton] = useState('');
+
   const [isBlockVisible, setIsBlockVisible] = useState(true);
   const [showBlock2, setShowBlock2] = useState(false);
 
   const onCommentChange = (event) => {
     setComment(event.target.value);
   };
-
+  
+  const currentUser = auth.currentUser;
   const deletePost = async (publicationId) => {
+    console.log(publicationId, 'ssssssssss')
     try {
+      const auth = getAuth();
+  
+  
+      if (!currentUser) {
+        console.log('User not logged in');
+        return;
+      }
+  
       const db = getFirestore();
-      await deleteDoc(doc(db, 'posts', publicationId));
+      const publicationDoc = doc(db, 'posts', publicationId);
+      const publicationSnapshot = await getDoc(publicationDoc);
+  
+      if (!publicationSnapshot.exists()) {
+        console.log('Publication not found');
+        return;
+      }
+  
+      const publicationData = publicationSnapshot.data();
+  
+      if (!publicationData) {
+        console.log('Publication data not found');
+        return;
+      }
+  
+      if (publicationData.userID !== currentUser.uid) {
 
+        return;
+      }
+  
+      await deleteDoc(publicationDoc);
+  
       const updatedPublications = publications.filter((publication) => publication.id !== publicationId);
       setCurrentUserPublications(updatedPublications);
-
+  
       console.log('Post deleted successfully!');
     } catch (error) {
       console.error('Error deleting post:', error);
@@ -54,7 +82,7 @@ const PublicationModal = ({ publications, publication1, userProfile }) => {
 
   const handleShowModal = (publication) => {
 
-    setCurrentPublicationId(publication);
+    setCurrentPublicationId(publication.id);
 
 
 
@@ -201,9 +229,12 @@ const PublicationModal = ({ publications, publication1, userProfile }) => {
                             <p className="font-semibold  text-lg my-auto hidden md:block">{publication.user.username}</p>
 
                           </div>
-                          <button
-                            onClick={() => deletePost(currentPublicationId)}
-                            className=' text-red-500 text-lg mr-6 hidden md:block'>Delete</button>
+                          {currentUser && currentUser.uid === publication.userID && (
+                               <button
+                               onClick={() => deletePost(currentPublicationId)}
+                               className=' text-red-500 text-lg mr-6 hidden md:block'>Delete</button>
+                          )}
+                       
 
                           <h3 className=' visible md:hidden text-center'>Коментарии</h3>
                           <button className="right-11 text-3xl" onClick={() => setShowModal(false)}>

@@ -37,7 +37,7 @@ const fetchAllPublications = async (page, existingPublications) => {
 const AppProvider = ({ children }) => {
   const [publications, setPublications] = useState([]);
   const [page, setPage] = useState(1);
-
+  console.log(publications)
   useEffect(() => {
     fetchAllPublications(page, publications).then((newPublications) => {
       setPublications(newPublications);

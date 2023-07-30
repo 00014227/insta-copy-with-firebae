@@ -118,7 +118,7 @@ const Profile = () => {
         </div>
 
         <div className="md:flex md:grid w-96 gap-1 grid-cols-3   ">
-          <PublicationModal publications={currentUserPublications} userProfile={userProfile}/>
+          <PublicationModal publications={currentUserPublications} userProfile={userProfile} setCurrentUserPublications={setCurrentUserPublications}/>
         </div>
       </div>
     </div>
